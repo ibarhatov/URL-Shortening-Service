@@ -2,31 +2,28 @@ package com.ibarkhatov.urlshortener.controller;
 
 import com.ibarkhatov.urlshortener.dto.CreateUrlRequest;
 import com.ibarkhatov.urlshortener.dto.UrlResponse;
+import com.ibarkhatov.urlshortener.service.UrlShorteningService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class UrlController {
+
+    private final UrlShorteningService service;
 
     @PostMapping("/urls")
     public ResponseEntity<UrlResponse> createShortUrl(@Valid @RequestBody CreateUrlRequest request) {
-        UrlResponse response = new UrlResponse(
-                1L,
-                request.originalUrl(),
-                "stub123",
-                Instant.now(),
-                0L,
-                null
-        );
+        UrlResponse response = service.createShortUrl(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -48,5 +45,3 @@ public class UrlController {
         return ResponseEntity.noContent().build();
     }
 }
-
-
