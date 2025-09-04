@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: url-shortening-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/url_shortener}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/master.yaml
