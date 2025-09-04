@@ -29,10 +29,13 @@ public class UrlController {
 
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
-        HttpHeaders headers = new HttpHeaders();
-        String originalUrl = "https://mock.com";
-        headers.setLocation(URI.create(originalUrl));
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        return service.trackClickAndResolve(shortCode)
+                .map(url -> {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setLocation(URI.create(url));
+                    return new ResponseEntity<Void>(headers, HttpStatus.FOUND);
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("/urls")
