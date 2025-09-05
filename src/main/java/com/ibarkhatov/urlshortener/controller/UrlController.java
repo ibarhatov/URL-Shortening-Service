@@ -44,6 +44,7 @@ public class UrlController {
 
     @DeleteMapping("/urls/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return ResponseEntity.noContent().build();
+        boolean removed = service.deleteById(id);
+        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

@@ -54,4 +54,13 @@ public class UrlShorteningService {
                 .map(mapper::toDto)
                 .toList();
     }
+
+    @Transactional
+    public boolean deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            return false;
+        }
+        repository.deleteById(id);
+        return true;
+    }
 }
