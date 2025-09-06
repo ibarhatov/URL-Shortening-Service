@@ -6,6 +6,7 @@ import com.ibarkhatov.urlshortener.dto.UrlResponse;
 import com.ibarkhatov.urlshortener.mapper.ShortUrlMapper;
 import com.ibarkhatov.urlshortener.repository.ShortUrlRepository;
 import org.apache.commons.codec.binary.Base64;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -23,12 +24,19 @@ import static org.mockito.Mockito.when;
 
 class UrlShorteningServiceTest {
 
+    private ShortUrlRepository repository;
+    private ShortUrlMapper mapper;
+    private UrlShorteningService service;
+
+    @BeforeEach
+    void setUp() {
+        repository = Mockito.mock(ShortUrlRepository.class);
+        mapper = Mockito.mock(ShortUrlMapper.class);
+        service = new UrlShorteningService(repository, mapper);
+    }
+
     @Test
     void createShortUrl_generatesUrlSafeBase64CodeFromId() {
-        ShortUrlRepository repository = Mockito.mock(ShortUrlRepository.class);
-        ShortUrlMapper mapper = Mockito.mock(ShortUrlMapper.class);
-        UrlShorteningService service = new UrlShorteningService(repository, mapper);
-
         long newId = 123L;
         String originalUrl = "https://originalurl.com/page";
         CreateUrlRequest request = new CreateUrlRequest(originalUrl);
@@ -68,10 +76,6 @@ class UrlShorteningServiceTest {
 
     @Test
     void resolveAndTrack_updatesMetrics_andReturnsOriginalUrl() {
-        ShortUrlRepository repository = Mockito.mock(ShortUrlRepository.class);
-        ShortUrlMapper mapper = Mockito.mock(ShortUrlMapper.class);
-        UrlShorteningService service = new UrlShorteningService(repository, mapper);
-
         String code = "abc";
         String original = "https://original.com";
 
@@ -98,10 +102,6 @@ class UrlShorteningServiceTest {
 
     @Test
     void resolveAndTrack_returnsEmpty_whenNotFound() {
-        ShortUrlRepository repository = Mockito.mock(ShortUrlRepository.class);
-        ShortUrlMapper mapper = Mockito.mock(ShortUrlMapper.class);
-        UrlShorteningService service = new UrlShorteningService(repository, mapper);
-
         Mockito.when(repository.findByShortCode("missing")).thenReturn(Optional.empty());
 
         Optional<String> result = service.resolveAndTrack("missing");
@@ -112,10 +112,6 @@ class UrlShorteningServiceTest {
 
     @Test
     void listAll_returnsMappedResponses() {
-        ShortUrlRepository repository = Mockito.mock(ShortUrlRepository.class);
-        ShortUrlMapper mapper = Mockito.mock(ShortUrlMapper.class);
-        UrlShorteningService service = new UrlShorteningService(repository, mapper);
-
         ShortUrl e1 = new ShortUrl();
         e1.setId(1L);
         e1.setOriginalUrl("https://a.com");
@@ -148,5 +144,29 @@ class UrlShorteningServiceTest {
 
         Mockito.verify(repository).findAll();
         Mockito.verify(mapper, Mockito.times(2)).toDto(Mockito.any(ShortUrl.class));
+    }
+
+    @Test
+    void deleteById_returnsTrue_whenEntityExists() {
+        Long id = 42L;
+        Mockito.when(repository.existsById(id)).thenReturn(true);
+
+        boolean result = service.deleteById(id);
+
+        assertThat(result).isTrue();
+        Mockito.verify(repository).existsById(id);
+        Mockito.verify(repository).deleteById(id);
+    }
+
+    @Test
+    void deleteById_returnsFalse_whenEntityMissing() {
+        Long id = 100L;
+        Mockito.when(repository.existsById(id)).thenReturn(false);
+
+        boolean result = service.deleteById(id);
+
+        assertThat(result).isFalse();
+        Mockito.verify(repository).existsById(id);
+        Mockito.verify(repository, Mockito.never()).deleteById(Mockito.anyLong());
     }
 }
