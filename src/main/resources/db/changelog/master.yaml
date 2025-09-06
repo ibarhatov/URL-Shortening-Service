@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: classpath:db/changelog/changes/001-init-short-url.yaml
+  - include:
+      file: classpath:db/changelog/changes/002-add-short-url-access.yaml

@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-short-url-access
+      author: ibarkhatov
+      changes:
+        - createTable:
+            tableName: short_url_access
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: short_url_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accessed_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: short_url_access
+            baseColumnNames: short_url_id
+            referencedTableName: short_url
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_access_short_url
+            tableName: short_url_access
+            indexName: idx_access_accessed_at_short_url_id
+            columns:
+              - column:
+                  name: accessed_at
+              - column:
+                  name: short_url_id
