@@ -29,7 +29,7 @@ public class UrlController {
 
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
-        return service.trackClickAndResolve(shortCode)
+        return service.resolveAndTrack(shortCode)
                 .map(url -> {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setLocation(URI.create(url));

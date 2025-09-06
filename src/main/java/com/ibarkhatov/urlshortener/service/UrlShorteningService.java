@@ -42,7 +42,7 @@ public class UrlShorteningService {
     }
 
     @Transactional
-    public Optional<String> trackClickAndResolve(String shortCode) {
+    public Optional<String> resolveAndTrack(String shortCode) {
         return repository.findByShortCode(shortCode)
                 .map(entity -> {
                     entity.setClickCount(entity.getClickCount() + 1);
