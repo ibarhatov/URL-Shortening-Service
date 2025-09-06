@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,13 +43,10 @@ public class UrlShorteningService {
     @Transactional
     public Optional<String> resolveAndTrack(String shortCode) {
         log.info("Resolve code={}", shortCode);
-        return repository.findByShortCode(shortCode)
-                .map(entity -> {
-                    entity.setClickCount(entity.getClickCount() + 1);
-                    entity.setLastAccessedAt(Instant.now());
-                    repository.save(entity);
-                    log.info("Resolved id={} code={} clicks={}", entity.getId(), shortCode, entity.getClickCount());
-                    return entity.getOriginalUrl();
+        return repository.incrementAndReturn(shortCode)
+                .map(shortUrl -> {
+                    log.info("Resolved id={} code={}", shortUrl.getId(), shortCode);
+                    return shortUrl.getOriginalUrl();
                 });
     }
 
