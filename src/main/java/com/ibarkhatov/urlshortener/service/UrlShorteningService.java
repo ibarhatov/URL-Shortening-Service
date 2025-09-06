@@ -6,6 +6,7 @@ import com.ibarkhatov.urlshortener.dto.UrlResponse;
 import com.ibarkhatov.urlshortener.mapper.ShortUrlMapper;
 import com.ibarkhatov.urlshortener.repository.ShortUrlRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UrlShorteningService {
     private final ShortUrlRepository repository;
@@ -23,6 +25,7 @@ public class UrlShorteningService {
 
     @Transactional
     public UrlResponse createShortUrl(CreateUrlRequest request) {
+        log.info("Create url");
         ShortUrl entity = new ShortUrl();
         entity.setOriginalUrl(request.originalUrl());
         entity.setClickCount(0);
@@ -33,17 +36,20 @@ public class UrlShorteningService {
         String shortCode = Base64.encodeBase64URLSafeString(idBytes);
         saved.setShortCode(shortCode);
         saved = repository.save(saved);
+        log.info("Created id={} code={}", saved.getId(), saved.getShortCode());
 
         return mapper.toDto(saved);
     }
 
     @Transactional
     public Optional<String> resolveAndTrack(String shortCode) {
+        log.info("Resolve code={}", shortCode);
         return repository.findByShortCode(shortCode)
                 .map(entity -> {
                     entity.setClickCount(entity.getClickCount() + 1);
                     entity.setLastAccessedAt(Instant.now());
                     repository.save(entity);
+                    log.info("Resolved id={} code={} clicks={}", entity.getId(), shortCode, entity.getClickCount());
                     return entity.getOriginalUrl();
                 });
     }
@@ -57,10 +63,13 @@ public class UrlShorteningService {
 
     @Transactional
     public boolean deleteById(Long id) {
+        log.info("Delete id={}", id);
         if (!repository.existsById(id)) {
+            log.info("Not found id={}", id);
             return false;
         }
         repository.deleteById(id);
+        log.info("Deleted id={}", id);
         return true;
     }
 }
