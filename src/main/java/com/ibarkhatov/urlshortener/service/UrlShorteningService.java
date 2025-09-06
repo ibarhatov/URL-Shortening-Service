@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +46,12 @@ public class UrlShorteningService {
                     repository.save(entity);
                     return entity.getOriginalUrl();
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public List<UrlResponse> listAll() {
+        return repository.findAll().stream()
+                .map(mapper::toDto)
+                .toList();
     }
 }

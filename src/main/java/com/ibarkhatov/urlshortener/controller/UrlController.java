@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -40,7 +39,7 @@ public class UrlController {
 
     @GetMapping("/urls")
     public ResponseEntity<List<UrlResponse>> listAll() {
-        return ResponseEntity.ok(Collections.emptyList());
+        return ResponseEntity.ok(service.listAll());
     }
 
     @DeleteMapping("/urls/{id}")
