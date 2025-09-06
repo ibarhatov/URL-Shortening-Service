@@ -9,3 +9,6 @@ spring:
     open-in-view: false
   liquibase:
     change-log: classpath:db/changelog/master.yaml
+logging:
+  level:
+    root: INFO
