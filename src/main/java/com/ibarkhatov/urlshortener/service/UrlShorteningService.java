@@ -3,6 +3,7 @@ package com.ibarkhatov.urlshortener.service;
 import com.ibarkhatov.urlshortener.domain.ShortUrl;
 import com.ibarkhatov.urlshortener.dto.CreateUrlRequest;
 import com.ibarkhatov.urlshortener.dto.UrlResponse;
+import com.ibarkhatov.urlshortener.mapper.ShortUrlMapper;
 import com.ibarkhatov.urlshortener.repository.ShortUrlRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UrlShorteningService {
     private final ShortUrlRepository repository;
+    private final ShortUrlMapper mapper;
 
     @Transactional
     public UrlResponse createShortUrl(CreateUrlRequest request) {
@@ -31,14 +33,7 @@ public class UrlShorteningService {
         saved.setShortCode(shortCode);
         saved = repository.save(saved);
 
-        return new UrlResponse(
-                saved.getId(),
-                saved.getOriginalUrl(),
-                saved.getShortCode(),
-                saved.getCreatedAt(),
-                saved.getClickCount(),
-                saved.getLastAccessedAt()
-        );
+        return mapper.toDto(saved);
     }
 
     @Transactional
