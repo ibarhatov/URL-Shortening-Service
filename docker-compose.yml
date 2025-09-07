@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: url_shortener
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  app:
+    image: com.ibarkhatov/url-shortening-service:latest
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+    ports:
+      - "8080:8080"

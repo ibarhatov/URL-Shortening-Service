@@ -75,5 +75,19 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>${project.groupId}/${project.artifactId}:latest</name>
+                    </image>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 

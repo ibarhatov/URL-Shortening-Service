@@ -12,3 +12,13 @@ spring:
 logging:
   level:
     root: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: develop
+  datasource:
+    url: jdbc:postgresql://db:5432/url_shortener
+    username: postgres
+    password: postgres
