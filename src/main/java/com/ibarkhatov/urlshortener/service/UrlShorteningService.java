@@ -79,9 +79,11 @@ public class UrlShorteningService {
 
     @Transactional(readOnly = true)
     public List<TopUrlResponse> getTopByWindow(String window, int limit) {
+        log.info("Get top by window: window={}, limit={}", window, limit);
         List<TopItemView> views = Strings.isBlank(window)
                 ? repository.findTopByClickCount(limit)
                 : repository.findTopByWindow(Instant.now().minus(parseWindow(window)).atOffset(ZoneOffset.UTC), limit);
+        log.info("Get top by window: items={}", views.size());
         return topUrlMapper.toDtoList(views);
     }
 
