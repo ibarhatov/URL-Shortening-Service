@@ -15,7 +15,7 @@ import java.time.Instant;
 public class ShortUrl {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "original_url")

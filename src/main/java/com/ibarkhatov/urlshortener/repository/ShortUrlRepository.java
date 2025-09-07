@@ -4,7 +4,6 @@ import com.ibarkhatov.urlshortener.domain.ShortUrl;
 import com.ibarkhatov.urlshortener.repository.projection.ShortUrlClickView;
 import com.ibarkhatov.urlshortener.repository.projection.TopItemView;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +14,6 @@ import java.util.Optional;
 public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
     Optional<ShortUrl> findByShortCode(String shortCode);
 
-    @Modifying
     @Query(value = """
             with updated as (
                 update short_url

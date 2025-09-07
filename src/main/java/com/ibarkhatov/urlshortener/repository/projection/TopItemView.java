@@ -7,7 +7,7 @@ public interface TopItemView {
 
     String getOriginalUrl();
 
-    long getTotalClicks();
+    long getClickCount();
 
     Instant getLastAccessedAt();
 }
